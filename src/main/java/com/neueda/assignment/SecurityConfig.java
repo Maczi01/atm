@@ -32,9 +32,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.authorizeRequests()
-                .antMatchers("/users").hasRole("USER")
+                .antMatchers("/getBalance").hasRole("USER")
                 .and()
-                .formLogin();
+                .httpBasic();
 
     }
 

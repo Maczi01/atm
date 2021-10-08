@@ -20,9 +20,14 @@ public class ATMController {
         return atmService.findAll();
     }
 
-    @PostMapping(/)
-    public double checkBalance(@RequestParam String accountNumber,@RequestBody String pin) throws WrongPinException, UserNotExist {
-        return atmService.checkBalance(accountNumber, pin);
+    @GetMapping("/getBalance")
+    public double checkBalance() throws WrongPinException, UserNotExist {
+        return atmService.checkBalance();
     }
+//
+//    @PostMapping(/)
+//    public double checkBalance(@RequestParam String accountNumber,@RequestBody String pin) throws WrongPinException, UserNotExist {
+//        return atmService.checkBalance(accountNumber, pin);
+//    }
 
 }

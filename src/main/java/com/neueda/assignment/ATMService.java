@@ -22,23 +22,26 @@ public class ATMService implements UserRepository {
         return users;
     }
 
-    public double checkBalance(String accountNumber, String pin) throws WrongPinException, UserNotExist {
-        User userToCheck = null;
-        for (User u : users) {
-            if (u.getAccountNumber().equals(accountNumber)) {
-                System.out.println(accountNumber);
-                userToCheck = u;
-            } else {
-                throw new UserNotExist("User with this id not exists in database!");
-            }
-        }
-        if (userToCheck.getPin().equals(pin)) {
-            System.out.println(userToCheck.getPin());
-            System.out.println(pin);
-            return userToCheck.getBalance();
-        } else {
-            throw new WrongPinException("Wrong PIN!");
-        }
+    public double checkBalance() throws WrongPinException, UserNotExist {
+
+        return 1.23;
+
+//        User userToCheck = null;
+//        for (User u : users) {
+//            if (u.getAccountNumber().equals(accountNumber)) {
+//                System.out.println(accountNumber);
+//                userToCheck = u;
+//            } else {
+//                throw new UserNotExist("User with this id not exists in database!");
+//            }
+//        }
+//        if (userToCheck.getPin().equals(pin)) {
+//            System.out.println(userToCheck.getPin());
+//            System.out.println(pin);
+//            return userToCheck.getBalance();
+//        } else {
+//            throw new WrongPinException("Wrong PIN!");
+//        }
     }
 
 }
