@@ -1,14 +1,11 @@
 package com.neueda.assignment;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping(path = "/users")
 public class ATMController {
 
     private ATMService atmService;
@@ -23,5 +20,9 @@ public class ATMController {
         return atmService.findAll();
     }
 
+    @PostMapping(/)
+    public double checkBalance(@RequestParam String accountNumber,@RequestBody String pin) throws WrongPinException, UserNotExist {
+        return atmService.checkBalance(accountNumber, pin);
+    }
 
 }
