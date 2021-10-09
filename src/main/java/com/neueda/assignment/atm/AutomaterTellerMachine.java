@@ -1,4 +1,4 @@
-package com.neueda.assignment.model;
+package com.neueda.assignment.atm;
 
 import org.springframework.stereotype.Component;
 

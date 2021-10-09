@@ -1,19 +1,37 @@
-package com.neueda.assignment.model;
+package com.neueda.assignment.card;
 
+
+import javax.persistence.Entity;
+import javax.persistence.Id;
 import java.util.Objects;
 
-public class User {
+@Entity
+public class Card {
 
+    @Id
+    private Long id;
     private String accountNumber;
     private String pin;
     private double balance;
     private double overdraft;
 
-    public User(String accountNumber, String pin, double balance, double overdraft) {
+    public Card() {
+    }
+
+    public Card(Long id, String accountNumber, String pin, double balance, double overdraft) {
+        this.id = id;
         this.accountNumber = accountNumber;
         this.pin = pin;
         this.balance = balance;
         this.overdraft = overdraft;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getAccountNumber() {
@@ -52,8 +70,8 @@ public class User {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        User user = (User) o;
-        return Double.compare(user.balance, balance) == 0 && Double.compare(user.overdraft, overdraft) == 0 && Objects.equals(accountNumber, user.accountNumber) && Objects.equals(pin, user.pin);
+        Card card = (Card) o;
+        return Double.compare(card.balance, balance) == 0 && Double.compare(card.overdraft, overdraft) == 0 && Objects.equals(accountNumber, card.accountNumber) && Objects.equals(pin, card.pin);
     }
 
     @Override
