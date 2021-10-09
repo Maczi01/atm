@@ -1,15 +1,12 @@
-package com.neueda.assignment;
+package com.neueda.assignment.security;
 
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfiguration;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -17,31 +14,33 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Bean
-    public PasswordEncoder passwordEncoder(){
+    public PasswordEncoder passwordEncoder() {
         return NoOpPasswordEncoder.getInstance();
     }
 
     @Override
     public void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.inMemoryAuthentication()
-                .withUser("user")
+                .withUser("1234")
                 .password("1234")
+                .roles("USER")
+                .and()
+                .withUser("1111")
+                .password("1111")
                 .roles("USER");
+        ;
     }
 
     @Override
     public void configure(HttpSecurity httpSecurity) throws Exception {
-        httpSecurity.authorizeRequests()
-                .antMatchers("/getBalance").hasRole("USER")
+        httpSecurity
+                .csrf().disable()
+                .authorizeRequests()
+                .antMatchers(HttpMethod.POST, "/makeWithdrawal").hasRole("USER")
+                .antMatchers(HttpMethod.GET, "/getBalance").hasRole("USER")
                 .and()
                 .httpBasic();
 
     }
-
-
-//@Bean
-//    public UserDetailsService userDetailsService(){
-//    UserDetails userDetails = User.withDefaultPasswordEncoder
-//}
 
 }

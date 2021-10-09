@@ -1,4 +1,4 @@
-package com.neueda.assignment;
+package com.neueda.assignment.model;
 
 import java.util.Objects;
 

@@ -1,13 +1,16 @@
-package com.neueda.assignment;
+package com.neueda.assignment.model;
+
+import org.springframework.stereotype.Component;
 
 import java.util.Objects;
 
+@Component
 public class AutomaterTellerMachine {
 
     private double cash;
 
-    public AutomaterTellerMachine(double cash) {
-        this.cash = cash;
+    public AutomaterTellerMachine() {
+        this.cash = 1500;
     }
 
     public double getCash() {
