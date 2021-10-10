@@ -2,24 +2,17 @@ package com.neueda.assignment.atm;
 
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Slf4j
 public class ATMData {
 
     private Money[] monies;
-    private double cash;
-    private ATMUtils atmUtils = new ATMUtils();
 
-    Money money1 = new Money(10, MoneyValues.FIFTY);
-    Money money2 = new Money(30, MoneyValues.TWENTY);
-    Money money3 = new Money(30, MoneyValues.TEN);
-    Money money4 = new Money(20, MoneyValues.FIVE);
-    Money[] moniesToATM = {money1, money2, money3, money4};
-
-    public ATMData() {
-        this.monies = moniesToATM;
-        this.cash = sumCashInATM();
+    public ATMData(Money[] monies) {
+        this.monies = monies;
     }
-
 
     public Money[] getMonies() {
         return monies;
@@ -29,17 +22,10 @@ public class ATMData {
         this.monies = monies;
     }
 
-    public double getCash() {
-        return cash;
-    }
 
-    public void setCash(double cash) {
-        this.cash = cash;
-    }
-
-    public double sumCashInATM() {
-        return atmUtils.sumCashInAtm(monies);
-    }
+//    public double sumCashInATM() {
+//        return atmUtilssumCashInAtm(monies);
+//    }
 
     public int[] moneyValues() {
         int[] values = new int[monies.length];
@@ -49,13 +35,32 @@ public class ATMData {
         return values;
     }
 
+    public double sumCash() {
+        double sum = 0;
+        for (Money money : monies) {
+            sum += money.getMoneyValues().getValue() * money.getQuantity();
+        }
+        valuesInATMlogger(monies);
+        return sum;
+    }
+
+    private void valuesInATMlogger(Money[] monies) {
+        for (Money money : monies) {
+            log.info(money.getMoneyValues() + ": " + money.getQuantity());
+        }
+    }
+
+    //    TODO change name
     public WithdrawalResponse calc(double moneyToWithdrawal) {
         WithdrawalResponse withdrawResponse = new WithdrawalResponse();
+        List<Double> list = new ArrayList<>();
         int moneyValue = (int) moneyToWithdrawal;
         int[] noteValues = moneyValues();
         for (int i = 0; i < noteValues.length && moneyValue != 0; i++) {
             Integer noteValue = noteValues[i];
             switch (noteValue) {
+                case noteValue:
+
                 case 50:
                     withdrawResponse.setFifties(moneyValue / noteValue);
                     money1.setQuantity(money1.getQuantity() - moneyValue / noteValue);

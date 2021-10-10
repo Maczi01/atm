@@ -15,7 +15,7 @@ public class ATMController {
 
     @GetMapping("/cash")
     public double cashInATM() {
-        return atmService.checkCashInATM();
+        return 0;
     }
 
     @PostMapping("/getBalance")

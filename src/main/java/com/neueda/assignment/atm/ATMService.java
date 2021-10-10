@@ -12,18 +12,19 @@ import org.springframework.stereotype.Service;
 @Service
 public class ATMService {
 
+
     private CardRepository cardRepository;
     private CardMapper cardMapper;
-    private ATMData atmData = new ATMData();
+    private ATMData atmData = new ATMData(bootstrapTestData());
 
     public ATMService(CardRepository cardRepository, CardMapper cardMapper) {
         this.cardRepository = cardRepository;
         this.cardMapper = cardMapper;
     }
 
-    public double checkCashInATM() {
-        return atmData.sumCashInATM();
-    }
+//    public double checkCashInATM() {
+//        return atmData.sumCashInATM();
+//    }
 
     public CheckBalanceResponse checkBalance(CheckBalanceRequest checkBalanceRequest) throws UserNotExistException, WrongPinException {
         Card card = cardRepository.findByAccountNumber(checkBalanceRequest.getAccountNumber())
@@ -45,7 +46,7 @@ public class ATMService {
             log.error("Amount not devided by 5");
             throw new WrongAmountException("Incorrect amount!");
         }
-        if (amount > atmData.sumCashInATM()) {
+        if (amount > atmData.sumCash()) {
             log.error("Not enough money in ATM!");
             throw new NotEnoughMoneyInATMException("Not enough money in ATM!");
         }
@@ -58,13 +59,22 @@ public class ATMService {
             throw new NotEnoughMoneyOnAccountException("Not enough money on your account");
         }
         log.info("Cash on account before withdrawal {}", card.getBalance());
-        atmData.setCash(atmData.getCash() - amount);
+//        atmData.setCash(atmData.getCash() - amount);
         card.setBalance(card.calculateBalanceAfterWithdraw(amount));
         cardRepository.save(card);
         log.info("Cash on account after withdrawal {}", card.getBalance());
         WithdrawalResponse calc = atmData.calc(amount);
         calc.setBalance(card.calculateBalanceAfterWithdraw(amount));
         return calc;
+    }
+
+    private Money[] bootstrapTestData() {
+        Money money1 = new Money(10, MoneyValues.FIFTY);
+        Money money2 = new Money(30, MoneyValues.TWENTY);
+        Money money3 = new Money(30, MoneyValues.TEN);
+        Money money4 = new Money(20, MoneyValues.FIVE);
+        Money[] moniesToATM = {money1, money2, money3, money4};
+        return moniesToATM;
     }
 
 }

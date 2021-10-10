@@ -69,6 +69,7 @@ public class Card {
     public double maximumAmountToWithdraw(){
         return getBalance() + getOverdraft();
     }
+
     public double calculateBalanceAfterWithdraw(double withDrawAmount){
         return getBalance() - withDrawAmount;
     }

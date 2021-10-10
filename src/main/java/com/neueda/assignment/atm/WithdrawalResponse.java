@@ -3,6 +3,7 @@ package com.neueda.assignment.atm;
 public class WithdrawalResponse {
 
     private double balance;
+
     private int fifties;
     private int twenties;
     private int tens;
