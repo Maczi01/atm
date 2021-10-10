@@ -32,7 +32,7 @@ public class ATMService {
             throw new WrongPinException("Wrong PIN, try again!");
         }
         log.info("Current balance is: {}", card.getBalance());
-        log.info("Maximum amount to withdrawal is: {}", card.getOverdraft());
+        log.info("Maximum amount to withdrawal is: {}", card.getBalance() + card.getOverdraft());
         CheckBalanceResponse checkBalanceResponse = new CheckBalanceResponse();
         checkBalanceResponse.setCurrentBalance(card.getBalance());
         checkBalanceResponse.setMaximumAmountToWithdrawal(card.getBalance() + card.getOverdraft());

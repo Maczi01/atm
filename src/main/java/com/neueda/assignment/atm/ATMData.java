@@ -7,6 +7,7 @@ public class ATMData {
 
     private Money[] monies;
     private double cash;
+    private ATMUtils atmUtils = new ATMUtils();
 
     Money money1 = new Money(10, MoneyValues.FIFTY);
     Money money2 = new Money(30, MoneyValues.TWENTY);
@@ -18,6 +19,7 @@ public class ATMData {
         this.monies = moniesToATM;
         this.cash = sumCashInATM();
     }
+
 
     public Money[] getMonies() {
         return monies;
@@ -36,18 +38,7 @@ public class ATMData {
     }
 
     public double sumCashInATM() {
-        double sum = 0;
-        for (Money money : monies) {
-            sum += money.getMoneyValues().getValue() * money.getQuantity();
-        }
-        valuesInAtm();
-        return sum;
-    }
-
-    private void valuesInAtm() {
-        for (Money money : monies) {
-            log.info(money.getMoneyValues() + ": " + money.getQuantity());
-        }
+        return atmUtils.sumCashInAtm(monies);
     }
 
     public int[] moneyValues() {
