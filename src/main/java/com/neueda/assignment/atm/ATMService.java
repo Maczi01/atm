@@ -42,8 +42,8 @@ public class ATMService {
             throw new WrongAmountException("Incorrect amount!");
         }
         if (amount > atmData.sumCashInATM()) {
-            log.error("Amount not devided by 5");
-            throw new NotEnoughMoneyInATMException("Incorrect amount!");
+            log.error("Not enough money in ATM!");
+            throw new NotEnoughMoneyInATMException("Not enough money in ATM!");
         }
         Card card = cardRepository.findByAccountNumber(withdrawalRequest.getAccountNumber())
                 .orElseThrow(() -> new UserNotExistException("User not exists"));
