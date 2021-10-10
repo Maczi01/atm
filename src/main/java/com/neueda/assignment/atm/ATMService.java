@@ -25,14 +25,18 @@ public class ATMService {
         return atmData.sumCashInATM();
     }
 
-    public double checkBalance(CardDTO cardDTO) throws UserNotExistException, WrongPinException {
+    public CheckBalanceResponse checkBalance(CardDTO cardDTO) throws UserNotExistException, WrongPinException {
         Card card = cardRepository.findByAccountNumber(cardDTO.getAccountNumber())
                 .orElseThrow(() -> new UserNotExistException("User not exists"));
         if (!card.getPin().equals(cardDTO.getPin())) {
             throw new WrongPinException("Wrong PIN, try again!");
         }
         log.info("Current balance is: {}", card.getBalance());
-        return card.getBalance();
+        log.info("Maximum amount to withdrawal is: {}", card.getOverdraft());
+        CheckBalanceResponse checkBalanceResponse = new CheckBalanceResponse();
+        checkBalanceResponse.setCurrentBalance(card.getBalance());
+        checkBalanceResponse.setMaximumAmountToWithdrawal(card.getBalance() + card.getOverdraft());
+        return checkBalanceResponse;
     }
 
     public WithdrawalResponse makeWithdrawal(WithdrawalRequest withdrawalRequest) throws WrongAmountException, UserNotExistException, NotEnoughMoneyInATMException, NotEnoughMoneyOnAccountException, WrongPinException {

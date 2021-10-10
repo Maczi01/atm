@@ -1,7 +1,5 @@
 package com.neueda.assignment.card;
 
-import javax.persistence.Id;
-
 public class CardDTO {
 
     private Long id;

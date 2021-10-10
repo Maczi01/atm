@@ -1,5 +1,8 @@
 package com.neueda.assignment.atm;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 public class ATMData {
 
     private Money[] monies;
@@ -41,9 +44,9 @@ public class ATMData {
         return sum;
     }
 
-    public void valuesInAtm(){
+    private void valuesInAtm() {
         for (Money money : monies) {
-            System.out.println(money.getMoneyValues() +": "+ money.getQuantity());
+            log.info(money.getMoneyValues() + ": " + money.getQuantity());
         }
     }
 
@@ -60,7 +63,6 @@ public class ATMData {
         int moneyValue = (int) moneyToWithdrawal;
         int[] noteValues = moneyValues();
         for (int i = 0; i < noteValues.length && moneyValue != 0; i++) {
-
             Integer noteValue = noteValues[i];
             switch (noteValue) {
                 case 50:
