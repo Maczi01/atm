@@ -65,31 +65,4 @@ public class ATMService {
         return calc;
     }
 
-//    private WithdrawalResponse calc(double moneyToWithdrawal) {
-//        WithdrawalResponse withdrawResponse = new WithdrawalResponse();
-//        int moneyValue = (int) moneyToWithdrawal;
-//        int[] noteValues = atmData.moneyValues();
-//        for (int i = 0; i < noteValues.length && moneyValue != 0; i++) {
-//
-//            Integer noteValue = noteValues[i];
-//            switch (noteValue) {
-//                case 50:
-//                    withdrawResponse.setFifties(moneyValue / noteValue);
-//                    break;
-//                case 20:
-//                    withdrawResponse.setTwenties(moneyValue / noteValue);
-//                    break;
-//                case 10:
-//                    withdrawResponse.setTens(moneyValue / noteValue);
-//                    break;
-//                case 5:
-//                    withdrawResponse.setFives(moneyValue / noteValue);
-//                    break;
-//            }
-//            System.out.println("No of " + noteValue + "'s" + " :" + moneyValue / noteValue);
-//            moneyValue = moneyValue % noteValue;
-//        }
-//        return withdrawResponse;
-//    }
-
 }
