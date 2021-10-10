@@ -66,11 +66,11 @@ public class Card {
         this.overdraft = overdraft;
     }
 
-    public double maximumAmountToWithdraw(){
+    public double maximumAmountToWithdraw() {
         return getBalance() + getOverdraft();
     }
 
-    public double calculateBalanceAfterWithdraw(double withDrawAmount){
+    public double calculateBalanceAfterWithdraw(double withDrawAmount) {
         return getBalance() - withDrawAmount;
     }
 

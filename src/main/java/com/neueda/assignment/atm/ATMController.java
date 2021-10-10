@@ -15,7 +15,7 @@ public class ATMController {
 
     @GetMapping("/cash")
     public double cashInATM() {
-        return 0;
+        return atmService.checkCashInATM();
     }
 
     @PostMapping("/getBalance")
@@ -23,6 +23,7 @@ public class ATMController {
         return atmService.checkBalance(checkBalanceRequest);
     }
 
+//  TODO response
     @PostMapping("/makeWithdrawal")
     public WithdrawalResponse makeWithdrawal(@RequestBody WithdrawalRequest withdrawalRequest) throws WrongAmountException, NotEnoughMoneyOnAccountException, NotEnoughMoneyInATMException, UserNotExistException, WrongPinException {
         return atmService.makeWithdrawal(withdrawalRequest);

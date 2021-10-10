@@ -1,12 +1,12 @@
 package com.neueda.assignment.atm;
 
-public enum MoneyValues {
+public enum MoneyValue {
 
     FIFTY(50), TWENTY(20), TEN(10), FIVE(5);
 
     private int moneyValue;
 
-    MoneyValues(int moneyValue) {
+    MoneyValue(int moneyValue) {
         this.moneyValue = moneyValue;
     }
 
@@ -14,8 +14,4 @@ public enum MoneyValues {
         return moneyValue;
     }
 
-    //
-//    int getAmount(){
-//        return
-//    }
 }

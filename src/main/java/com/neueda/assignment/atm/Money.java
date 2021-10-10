@@ -3,11 +3,11 @@ package com.neueda.assignment.atm;
 public class Money {
 
     private int quantity;
-    private MoneyValues moneyValues;
+    private MoneyValue moneyValue;
 
-    public Money(int quantity, MoneyValues moneyValues) {
+    public Money(int quantity, MoneyValue moneyValue) {
         this.quantity = quantity;
-        this.moneyValues = moneyValues;
+        this.moneyValue = moneyValue;
     }
 
     public int getQuantity() {
@@ -18,11 +18,11 @@ public class Money {
         this.quantity = quantity;
     }
 
-    public MoneyValues getMoneyValues() {
-        return moneyValues;
+    public MoneyValue getMoneyValues() {
+        return moneyValue;
     }
 
-    public void setMoneyValues(MoneyValues moneyValues) {
-        this.moneyValues = moneyValues;
+    public void setMoneyValues(MoneyValue moneyValue) {
+        this.moneyValue = moneyValue;
     }
 }
