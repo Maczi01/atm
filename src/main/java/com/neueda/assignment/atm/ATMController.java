@@ -1,10 +1,7 @@
 package com.neueda.assignment.atm;
 
 import com.neueda.assignment.card.CardDTO;
-import com.neueda.assignment.exceptions.NotEnoughMoneyInATMException;
-import com.neueda.assignment.exceptions.NotEnoughMoneyOnAccountException;
-import com.neueda.assignment.exceptions.UserNotExistException;
-import com.neueda.assignment.exceptions.WrongAmountException;
+import com.neueda.assignment.exceptions.*;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -18,7 +15,7 @@ public class ATMController {
 
     @GetMapping("/cash")
     public double cashInATM() {
-        return atmService.cashInATM();
+        return atmService.checkCashInATM();
     }
 
     @PostMapping("/getBalance")

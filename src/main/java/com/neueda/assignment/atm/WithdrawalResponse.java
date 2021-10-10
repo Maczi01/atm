@@ -2,6 +2,7 @@ package com.neueda.assignment.atm;
 
 public class WithdrawalResponse {
 
+    private double balance;
     private int fifties;
     private int twenties;
     private int tens;
@@ -10,7 +11,8 @@ public class WithdrawalResponse {
     public WithdrawalResponse() {
     }
 
-    public WithdrawalResponse(int fifties, int twenties, int tens, int fives) {
+    public WithdrawalResponse(double balance, int fifties, int twenties, int tens, int fives) {
+        this.balance = balance;
         this.fifties = fifties;
         this.twenties = twenties;
         this.tens = tens;
@@ -47,6 +49,14 @@ public class WithdrawalResponse {
 
     public void setFives(int fives) {
         this.fives = fives;
+    }
+
+    public double getBalance() {
+        return balance;
+    }
+
+    public void setBalance(double balance) {
+        this.balance = balance;
     }
 
     @Override
