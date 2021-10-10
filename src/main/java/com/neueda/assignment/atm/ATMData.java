@@ -2,17 +2,17 @@ package com.neueda.assignment.atm;
 
 public class ATMData {
 
-    private double cash;
+    private Money [] monies;
 
-    public ATMData(double cash) {
-        this.cash = cash;
+    public ATMData(Money[] monies) {
+        this.monies = monies;
     }
 
-    public double getCash() {
-        return cash;
+    public Money[] getMonies() {
+        return monies;
     }
 
-    public void setCash(double cash) {
-        this.cash = cash;
+    public void setMonies(Money[] monies) {
+        this.monies = monies;
     }
 }

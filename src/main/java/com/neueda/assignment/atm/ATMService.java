@@ -11,15 +11,20 @@ import com.neueda.assignment.exceptions.WrongAmountException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
-
 @Slf4j
 @Service
 public class ATMService {
 
+    Money money1 = new Money(10, MoneyValues.FIFTY);
+    Money money2 = new Money(30, MoneyValues.TWENTY);
+    Money money3 = new Money(30, MoneyValues.TEN);
+    Money money4 = new Money(2, MoneyValues.FIFTY);
+    Money [] monies = {money1,money2,money3,money4};
+
+
     private CardRepository cardRepository;
     private CardMapper cardMapper;
-    private ATMData atmData = new ATMData(1500);
+    private ATMData atmData = new ATMData(monies);
 
     public ATMService(CardRepository cardRepository, CardMapper cardMapper) {
         this.cardRepository = cardRepository;
@@ -27,7 +32,8 @@ public class ATMService {
     }
 
     public double cashInATM() {
-        return atmData.getCash();
+//        return atmData.getCash();
+        return 0;
     }
 
     public double checkBalance(CardDTO cardDTO) throws UserNotExistException, WrongPinException {
@@ -46,7 +52,8 @@ public class ATMService {
             log.error("Amount not devided by 5");
             throw new WrongAmountException("Incorrect amount!");
         }
-        if (amount > atmData.getCash()) {
+//        if (amount > atmData.getCash()) {
+        if (amount > 10000) {
             log.error("Amount not devided by 5");
             throw new NotEnoughMoneyInATMException("Incorrect amount!");
         }
@@ -61,7 +68,7 @@ public class ATMService {
             throw new NotEnoughMoneyOnAccountException("Not enough money on your account");
         }
         log.info("Cash on account before withdrawal {}", currentBalance);
-        atmData.setCash(atmData.getCash() - amount);
+//        atmData.setCash(atmData.getCash() - amount);
         card.setBalance(currentBalance - amount);
         cardRepository.save(card);
         log.info("Cash on account after withdrawal {}", currentBalance);
@@ -72,73 +79,27 @@ public class ATMService {
         WithdrawalResponse withdrawResponse = new WithdrawalResponse();
         int moneyValue = (int) moneyToWithdrawal;
         Integer[] noteValues = {50, 20, 10, 5};
-        if (moneyValue > 1500) {
-            System.out.println("ATM Cash Limit exceeds.");
-        } else {
-            for (int i = 0; i < noteValues.length && moneyValue != 0; i++) {
+        for (int i = 0; i < noteValues.length && moneyValue != 0; i++) {
 
-                Integer noteValue = noteValues[i];
-                if (moneyValue >= noteValue) {
-
-                    switch (noteValue) {
-                        case 50:
-                            withdrawResponse.setFifties(moneyValue / noteValue);
-                            break;
-                        case 20:
-                            withdrawResponse.setTwenties(moneyValue / noteValue);
-                            break;
-                        case 10:
-                            withdrawResponse.setTens(moneyValue / noteValue);
-                            break;
-                        case 5:
-                            withdrawResponse.setFives(moneyValue / noteValue);
-                            break;
-                    }
-                    System.out.println("No of " + noteValue + "'s" + " :" + moneyValue / noteValue);
-                    moneyValue = moneyValue % noteValue;
+            Integer noteValue = noteValues[i];
+                switch (noteValue) {
+                    case 50:
+                        withdrawResponse.setFifties(moneyValue / noteValue);
+                        break;
+                    case 20:
+                        withdrawResponse.setTwenties(moneyValue / noteValue);
+                        break;
+                    case 10:
+                        withdrawResponse.setTens(moneyValue / noteValue);
+                        break;
+                    case 5:
+                        withdrawResponse.setFives(moneyValue / noteValue);
+                        break;
                 }
-            }
+                System.out.println("No of " + noteValue + "'s" + " :" + moneyValue / noteValue);
+                moneyValue = moneyValue % noteValue;
         }
         return withdrawResponse;
     }
-
-
-    //
-//    public double checkBalance() throws UserNotExistException {
-//        String username = getUsername();
-//
-//        for (Card card : this.card) {
-//            if (card.getAccountNumber().equals(username)) {
-//                return card.getBalance();
-//            }
-//        }
-//
-//        throw new UserNotExistException("User not found");
-//    }
-//
-//    public double makeWithdrawal(double withdrawalAmount) throws WrongAmountException, NotEnoughMoneyOnAccountException, NotEnoughMoneyInATMException {
-//        String username = getUsername();
-//
-//        for (Card card : this.card) {
-//            if (card.getAccountNumber().equals(username)) {
-//                if (withdrawalAmount > card.getBalance()) {
-//                    throw new NotEnoughMoneyOnAccountException("You haven't got enough money to withdraw " + withdrawalAmount);
-//                }
-//                if (withdrawalAmount > automaterTellerMachine.getCash()) {
-//                    throw new NotEnoughMoneyInATMException("Not enough money in machine!");
-//                }
-//                card.setBalance(card.getBalance() - withdrawalAmount);
-//                System.out.println("Account balance: " + card.getBalance());
-//                return withdrawalAmount;
-//            }
-//        }
-//        return 0;
-//    }
-//
-//    private String getUsername() {
-//        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-//        return ((UserDetails) principal).getUsername();
-//    }
-
 
 }
