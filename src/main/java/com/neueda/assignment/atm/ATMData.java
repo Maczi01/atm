@@ -73,7 +73,7 @@ public class ATMData {
                     money4.setQuantity(money4.getQuantity() - moneyValue / noteValue);
                     break;
             }
-            System.out.println("No of " + noteValue + "'s" + " :" + moneyValue / noteValue);
+            log.info("No of " + noteValue + "'s" + " :" + moneyValue / noteValue);
             moneyValue = moneyValue % noteValue;
         }
         return withdrawResponse;

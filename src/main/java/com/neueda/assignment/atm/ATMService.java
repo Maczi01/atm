@@ -35,7 +35,7 @@ public class ATMService {
         log.info("Maximum amount to withdrawal is: {}", card.getBalance() + card.getOverdraft());
         CheckBalanceResponse checkBalanceResponse = new CheckBalanceResponse();
         checkBalanceResponse.setCurrentBalance(card.getBalance());
-        checkBalanceResponse.setMaximumAmountToWithdrawal(card.getBalance() + card.getOverdraft());
+        checkBalanceResponse.setMaximumAmountToWithdrawal(card.maximumAmountToWithdraw());
         return checkBalanceResponse;
     }
 
@@ -54,18 +54,16 @@ public class ATMService {
         if (!card.getPin().equals(withdrawalRequest.getPin())) {
             throw new WrongPinException("Wrong PIN, try again!");
         }
-        double currentBalance = card.getBalance();
-        double overdraft = card.getOverdraft();
-        if (amount > currentBalance + overdraft) {
+        if (amount > card.maximumAmountToWithdraw()) {
             throw new NotEnoughMoneyOnAccountException("Not enough money on your account");
         }
-        log.info("Cash on account before withdrawal {}", currentBalance);
+        log.info("Cash on account before withdrawal {}", card.getBalance());
         atmData.setCash(atmData.getCash() - amount);
-        card.setBalance(currentBalance - amount);
+        card.setBalance(card.calculateBalanceAfterWithdraw(amount));
         cardRepository.save(card);
-        log.info("Cash on account after withdrawal {}", currentBalance);
+        log.info("Cash on account after withdrawal {}", card.getBalance());
         WithdrawalResponse calc = atmData.calc(amount);
-        calc.setBalance(currentBalance - amount);
+        calc.setBalance(card.calculateBalanceAfterWithdraw(amount));
         return calc;
     }
 
