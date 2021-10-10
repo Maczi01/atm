@@ -31,18 +31,16 @@ public class ATMService {
     }
 
     public double checkBalance(CardDTO cardDTO) throws UserNotExistException, WrongPinException {
-        Optional<Card> card = cardRepository.findCardByAccountNumber(cardDTO.getAccountNumber());
-        if (card.isEmpty()) {
-            throw new UserNotExistException("User not exists");
-        }
-        if (!card.get().getPin().equals(cardDTO.getPin())) {
+        Card card = cardRepository.findByAccountNumber(cardDTO.getAccountNumber())
+                .orElseThrow(() -> new UserNotExistException("User not exists"));
+        if (!card.getPin().equals(cardDTO.getPin())) {
             throw new WrongPinException("Wrong PIN, try again!");
         }
-        log.info("Current balance is: {}", card.get().getBalance());
-        return card.get().getBalance();
+        log.info("Current balance is: {}", card.getBalance());
+        return card.getBalance();
     }
 
-    public double makeWithdrawal(WithdrawalRequest withdrawalRequest) throws WrongAmountException, UserNotExistException, NotEnoughMoneyInATMException, NotEnoughMoneyOnAccountException, WrongPinException {
+    public WithdrawalResponse makeWithdrawal(WithdrawalRequest withdrawalRequest) throws WrongAmountException, UserNotExistException, NotEnoughMoneyInATMException, NotEnoughMoneyOnAccountException, WrongPinException {
         double amount = withdrawalRequest.getAmount();
         if (amount % 5 != 0) {
             log.error("Amount not devided by 5");
@@ -52,25 +50,56 @@ public class ATMService {
             log.error("Amount not devided by 5");
             throw new NotEnoughMoneyInATMException("Incorrect amount!");
         }
-        Optional<Card> card = cardRepository.findCardByAccountNumber(withdrawalRequest.getAccountNumber());
-        if (card.isEmpty()) {
-            log.error("User not exists");
-            throw new UserNotExistException("User not exists");
-        }
-        if (!card.get().getPin().equals(withdrawalRequest.getPin())) {
+        Card card = cardRepository.findByAccountNumber(withdrawalRequest.getAccountNumber())
+                .orElseThrow(() -> new UserNotExistException("User not exists"));
+        if (!card.getPin().equals(withdrawalRequest.getPin())) {
             throw new WrongPinException("Wrong PIN, try again!");
         }
-        double currentBalance = card.get().getBalance();
-        double overdraft = card.get().getOverdraft();
+        double currentBalance = card.getBalance();
+        double overdraft = card.getOverdraft();
         if (amount > currentBalance + overdraft) {
             throw new NotEnoughMoneyOnAccountException("Not enough money on your account");
         }
         log.info("Cash on account before withdrawal {}", currentBalance);
         atmData.setCash(atmData.getCash() - amount);
-        card.get().setBalance(currentBalance - amount);
-        cardRepository.save(card.get());
+        card.setBalance(currentBalance - amount);
+        cardRepository.save(card);
         log.info("Cash on account after withdrawal {}", currentBalance);
-        return amount;
+        return calc(amount);
+    }
+
+    private WithdrawalResponse calc(double moneyToWithdrawal) {
+        WithdrawalResponse withdrawResponse = new WithdrawalResponse();
+        int moneyValue = (int) moneyToWithdrawal;
+        Integer[] noteValues = {50, 20, 10, 5};
+        if (moneyValue > 1500) {
+            System.out.println("ATM Cash Limit exceeds.");
+        } else {
+            for (int i = 0; i < noteValues.length && moneyValue != 0; i++) {
+
+                Integer noteValue = noteValues[i];
+                if (moneyValue >= noteValue) {
+
+                    switch (noteValue) {
+                        case 50:
+                            withdrawResponse.setFifties(moneyValue / noteValue);
+                            break;
+                        case 20:
+                            withdrawResponse.setTwenties(moneyValue / noteValue);
+                            break;
+                        case 10:
+                            withdrawResponse.setTens(moneyValue / noteValue);
+                            break;
+                        case 5:
+                            withdrawResponse.setFives(moneyValue / noteValue);
+                            break;
+                    }
+                    System.out.println("No of " + noteValue + "'s" + " :" + moneyValue / noteValue);
+                    moneyValue = moneyValue % noteValue;
+                }
+            }
+        }
+        return withdrawResponse;
     }
 
 

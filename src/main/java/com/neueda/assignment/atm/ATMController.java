@@ -27,7 +27,7 @@ public class ATMController {
     }
 
     @PostMapping("/makeWithdrawal")
-    public double makeWithdrawal(@RequestBody WithdrawalRequest withdrawalRequest) throws WrongAmountException, NotEnoughMoneyOnAccountException, NotEnoughMoneyInATMException, UserNotExistException, WrongPinException {
+    public WithdrawalResponse makeWithdrawal(@RequestBody WithdrawalRequest withdrawalRequest) throws WrongAmountException, NotEnoughMoneyOnAccountException, NotEnoughMoneyInATMException, UserNotExistException, WrongPinException {
         return atmService.makeWithdrawal(withdrawalRequest);
     }
 
