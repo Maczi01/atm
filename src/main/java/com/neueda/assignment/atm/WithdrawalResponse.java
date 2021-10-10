@@ -10,6 +10,8 @@ public class WithdrawalResponse {
     public WithdrawalResponse() {
     }
 
+
+
     public double getBalance() {
         return balance;
     }

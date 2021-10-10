@@ -14,7 +14,7 @@ public class ATMDataTest {
 
     @Test
     @DisplayName("Should return correct sum for given money")
-    public void shouldReturnTwothousandsForGivenMoney() {
+    public void shouldReturnTwoThousandsForGivenMoney() {
 //        given
         Money money1 = new Money(10, MoneyValue.FIFTY);
         Money money2 = new Money(40, MoneyValue.TWENTY);
@@ -39,17 +39,16 @@ public class ATMDataTest {
         Money[] moniesToATM = {money1, money2, money3, money4};
         ATMData atmData = new ATMData(moniesToATM);
 //        when
-        WithdrawalResponse calc = atmData.convertMoneyIntoValues(135, moniesToATM);
-        int quantityOfFifty = calc.getWithdrawal().stream().filter(e -> e.getMoneyValues().equals(MoneyValue.FIFTY)).findFirst().get().getQuantity();
-        int quantityOfTwenty = calc.getWithdrawal().stream().filter(e -> e.getMoneyValues().equals(MoneyValue.TWENTY)).findFirst().get().getQuantity();
-        int quantityOfTen = calc.getWithdrawal().stream().filter(e -> e.getMoneyValues().equals(MoneyValue.TEN)).findFirst().get().getQuantity();
-        int quantityOfFive = calc.getWithdrawal().stream().filter(e -> e.getMoneyValues().equals(MoneyValue.FIVE)).findFirst().get().getQuantity();
+        WithdrawalResponse calculatedValue = atmData.convertMoneyIntoValues(135);
+        int quantityOfFifty = calculatedValue.getWithdrawal().stream().filter(e -> e.getMoneyValues().equals(MoneyValue.FIFTY)).findFirst().get().getQuantity();
+        int quantityOfTwenty = calculatedValue.getWithdrawal().stream().filter(e -> e.getMoneyValues().equals(MoneyValue.TWENTY)).findFirst().get().getQuantity();
+        int quantityOfTen = calculatedValue.getWithdrawal().stream().filter(e -> e.getMoneyValues().equals(MoneyValue.TEN)).findFirst().get().getQuantity();
+        int quantityOfFive = calculatedValue.getWithdrawal().stream().filter(e -> e.getMoneyValues().equals(MoneyValue.FIVE)).findFirst().get().getQuantity();
 //        then
         assertThat(quantityOfFifty).isEqualTo(2);
         assertThat(quantityOfTwenty).isEqualTo(1);
         assertThat(quantityOfTen).isEqualTo(1);
         assertThat(quantityOfFive).isEqualTo(1);
     }
-
 
 }

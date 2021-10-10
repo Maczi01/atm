@@ -29,17 +29,17 @@ public class ATMData {
         for (Money money : monies) {
             sum += money.getMoneyValues().getValue() * money.getQuantity();
         }
-        valuesInATMlogger(monies);
+        valuesInATMlogger();
         return sum;
     }
 
-    private void valuesInATMlogger(Money[] monies) {
+    private void valuesInATMlogger() {
         for (Money money : monies) {
             log.info(money.getMoneyValues() + ": " + money.getQuantity());
         }
     }
 
-    public WithdrawalResponse convertMoneyIntoValues(double moneyToWithdrawal, Money[] monies) {
+    public WithdrawalResponse convertMoneyIntoValues(double moneyToWithdrawal) {
         WithdrawalResponse withdrawResponse = new WithdrawalResponse();
         List<Money> list = new ArrayList<>();
         int moneyValue = (int) moneyToWithdrawal;
@@ -48,14 +48,16 @@ public class ATMData {
         for (int i = 0; i < collecttionOfNotes.size(); i++) {
             if (moneyValue >= collecttionOfNotes.get(i) && collecttionOfNotes.get(i) > 0) {
                 list.add(new Money(moneyValue / collecttionOfNotes.get(i), MoneyValue.values()[i]));
-                monies[i].setQuantity(monies[i].getQuantity() - moneyValue / collecttionOfNotes.get(i));
+                int quantity = (monies[i].getQuantity() - (moneyValue / collecttionOfNotes.get(i)));
+
+                monies[i].setQuantity(quantity);
             }
             moneyValue = moneyValue % collecttionOfNotes.get(i);
         }
         for (Money money : list) {
             System.out.println(money.getMoneyValues().getValue() + " " + money.getQuantity());
         }
-        valuesInATMlogger(monies);
+        valuesInATMlogger();
         withdrawResponse.setWithdrawal(list);
         return withdrawResponse;
     }

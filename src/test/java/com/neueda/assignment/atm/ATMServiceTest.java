@@ -1,72 +1,32 @@
 package com.neueda.assignment.atm;
 
 import com.neueda.assignment.card.Card;
-import com.neueda.assignment.card.CardMapper;
 import com.neueda.assignment.card.CardRepository;
-import com.neueda.assignment.exceptions.UserNotExistException;
-import com.neueda.assignment.exceptions.WrongPinException;
+import com.neueda.assignment.exceptions.*;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.anyLong;
+import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
-import javax.persistence.Access;
-import java.util.List;
+import java.util.Arrays;
 import java.util.Optional;
 
 
-//@SpringBootTest
-@ExtendWith(SpringExtension.class)
+@SpringBootTest
 public class ATMServiceTest {
 
     @Mock
-    CardRepository cardRepository;
-    private ATMData atmData = new ATMData(bootstrapTestData());
+    private CardRepository cardRepository;
 
     @InjectMocks
-    ATMService atmService = new ATMService(cardRepository);
+    private ATMService atmService = new ATMService(cardRepository);
 
-
-    @Test
-    public void checkBalanceTest() throws UserNotExistException, WrongPinException {
-//        given
-        CheckBalanceRequest checkBalanceRequest = new CheckBalanceRequest("123", "1234");
-        Optional<Card> card = Optional.of(new Card(1L, "123", "1234", 2000, 100));
-//        when
-        when(cardRepository.findByAccountNumber(anyString())).thenReturn(card);
-//        then
-        CheckBalanceResponse checkBalanceResponse = atmService.checkBalance(checkBalanceRequest);
-        assertThat(checkBalanceResponse.getCurrentBalance()).isEqualTo(2000);
-        assertThat(checkBalanceResponse.getMaximumAmountToWithdrawal()).isEqualTo(2100);
-
-    }
-
-    @Test
-    public void shouldThrowExceptionWhenPinIsIncorrect() throws UserNotExistException, WrongPinException {
-//        given
-        CheckBalanceRequest checkBalanceRequest = new CheckBalanceRequest("123", "1234");
-//        when
-        Optional<Card> card = Optional.of(new Card(1L, "123", "1347", 2000, 100));
-        when(cardRepository.findByAccountNumber(anyString())).thenReturn(card);
-//        then
-        assertThatThrownBy(() -> {
-            atmService.checkBalance(checkBalanceRequest);
-        }).isInstanceOf(WrongPinException.class);
-
-    }
-
-//TODO kontekst sprigna tylko dla beanów, bez bazy;
+    private ATMData atmData = new ATMData(bootstrapTestData());
 
     private Money[] bootstrapTestData() {
         Money money1 = new Money(10, MoneyValue.FIFTY);
@@ -76,5 +36,97 @@ public class ATMServiceTest {
         Money[] moniesToATM = {money1, money2, money3, money4};
         return moniesToATM;
     }
+
+    @Test
+    @DisplayName("Should return correct sum for choosen card")
+    public void shouldReturnCorrectBalanceAndMaximumAmountToWithdrawal() throws CardNotExistException, WrongPinException {
+//        given
+        CheckBalanceRequest checkBalanceRequest = new CheckBalanceRequest("123", "1234");
+        Optional<Card> card = Optional.of(new Card(1L, "123", "1234", 2000, 100));
+//        when
+        when(cardRepository.findByAccountNumber(anyString())).thenReturn(card);
+//        then
+        CheckBalanceResponse checkBalanceResponse = atmService.checkBalance(checkBalanceRequest);
+        assertThat(checkBalanceResponse.getCurrentBalance()).isEqualTo(2000);
+        assertThat(checkBalanceResponse.getMaximumAmountToWithdrawal()).isEqualTo(2100);
+    }
+
+    @Test
+    @DisplayName("Cannot check balance and should throw exception when Pin is incorrect")
+    public void shouldThrowExceptionWhenPinIsIncorrect() {
+//        given
+        CheckBalanceRequest checkBalanceRequest = new CheckBalanceRequest("123", "1234");
+//        when
+        Optional<Card> card = Optional.of(new Card(1L, "123", "1347", 2000, 100));
+        when(cardRepository.findByAccountNumber(anyString())).thenReturn(card);
+//        then
+        assertThatThrownBy(() -> {
+            atmService.checkBalance(checkBalanceRequest);
+        }).isInstanceOf(WrongPinException.class)
+                .hasMessage("Wrong PIN, try again!");
+    }
+
+    @Test
+    @DisplayName("Cannot make withdraw and should throw exception when number is not devided by 5")
+    public void shouldThrowExceptionWhenNumberIsNotDevidedByFive() throws CardNotExistException, WrongPinException {
+//        given
+        WithdrawalRequest withdrawalRequest = new WithdrawalRequest(333, "123", "1347");
+//        when
+        Optional<Card> card = Optional.of(new Card(1L, "123", "1347", 2000, 100));
+        when(cardRepository.findByAccountNumber(anyString())).thenReturn(card);
+//        then
+        assertThatThrownBy(() -> {
+            atmService.makeWithdrawal(withdrawalRequest);
+        }).isInstanceOf(WrongAmountException.class)
+                .hasMessage("Incorrect amount!");
+    }
+
+    @Test
+    @DisplayName("Cannot make withdraw and should throw exception when is not enough money ATM")
+    public void shouldThrowExceptionWhenWithdrawalIsbiggerThanAmountMoneyInATM() {
+//        given
+        WithdrawalRequest withdrawalRequest = new WithdrawalRequest(3330, "123", "1347");
+//        when
+        Optional<Card> card = Optional.of(new Card(1L, "123", "1347", 2000, 100));
+        when(cardRepository.findByAccountNumber(anyString())).thenReturn(card);
+//        then
+        assertThatThrownBy(() -> {
+            atmService.makeWithdrawal(withdrawalRequest);
+        }).isInstanceOf(NotEnoughMoneyInATMException.class)
+                .hasMessage("Not enough money in ATM!");
+    }
+
+
+    @Test
+    @DisplayName("Should throw exception when card not exists")
+    public void shouldThrowExceptionWhenCardWithGivenNumberNotExists() {
+//        given
+        WithdrawalRequest withdrawalRequest = new WithdrawalRequest(330, "997", "1347");
+//        when
+        Optional<Card> card = Optional.of(new Card(1L, "123", "1347", 2000, 100));
+        when(cardRepository.findByAccountNumber(anyString())).thenReturn(card);
+//        then
+        assertThat(catchThrowable(() -> {
+            throw new CardNotExistException("Card not exists");
+        })).as("Card not exists")
+                .isInstanceOf(CardNotExistException.class)
+                .hasMessageContaining("Card not exists");
+    }
+
+    @Test
+    @DisplayName("Should throw exception when balance is smaller than withdrawal")
+    public void shouldThrowExceptionWhenBalanceIsSmallerThanWithdrawal() {
+//        given
+        WithdrawalRequest withdrawalRequest = new WithdrawalRequest(350, "123", "1347");
+//        when
+        Optional<Card> card = Optional.of(new Card(1L, "123", "1347", 200, 100));
+        when(cardRepository.findByAccountNumber(anyString())).thenReturn(card);
+//        then
+        assertThatThrownBy(() -> {
+            atmService.makeWithdrawal(withdrawalRequest);
+        }).isInstanceOf(NotEnoughMoneyOnAccountException.class)
+                .hasMessage("Not enough money on your account");
+    }
+
 
 }

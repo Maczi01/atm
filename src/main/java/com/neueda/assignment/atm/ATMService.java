@@ -1,16 +1,16 @@
 package com.neueda.assignment.atm;
 
 import com.neueda.assignment.card.Card;
-import com.neueda.assignment.card.CardMapper;
 import com.neueda.assignment.card.CardRepository;
 import com.neueda.assignment.exceptions.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 
 @Slf4j
 @Service
 public class ATMService {
-
 
     private CardRepository cardRepository;
     private ATMData atmData = new ATMData(bootstrapTestData());
@@ -23,9 +23,9 @@ public class ATMService {
         return atmData.sumCash();
     }
 
-    public CheckBalanceResponse checkBalance(CheckBalanceRequest checkBalanceRequest) throws UserNotExistException, WrongPinException {
+    public CheckBalanceResponse checkBalance(CheckBalanceRequest checkBalanceRequest) throws CardNotExistException, WrongPinException {
         Card card = cardRepository.findByAccountNumber(checkBalanceRequest.getAccountNumber())
-                .orElseThrow(() -> new UserNotExistException("User not exists"));
+                .orElseThrow(() -> new CardNotExistException("User not exists"));
         if (!card.getPin().equals(checkBalanceRequest.getPin())) {
             throw new WrongPinException("Wrong PIN, try again!");
         }
@@ -34,7 +34,8 @@ public class ATMService {
         return new CheckBalanceResponse(card.getBalance(), card.maximumAmountToWithdraw());
     }
 
-    public WithdrawalResponse makeWithdrawal(WithdrawalRequest withdrawalRequest) throws WrongAmountException, UserNotExistException, NotEnoughMoneyInATMException, NotEnoughMoneyOnAccountException, WrongPinException {
+    @Transactional
+    public WithdrawalResponse makeWithdrawal(WithdrawalRequest withdrawalRequest) throws WrongAmountException, CardNotExistException, NotEnoughMoneyInATMException, NotEnoughMoneyOnAccountException, WrongPinException {
         double amount = withdrawalRequest.getAmount();
         if (amount % 5 != 0) {
             log.error("Amount not devided by 5");
@@ -45,7 +46,7 @@ public class ATMService {
             throw new NotEnoughMoneyInATMException("Not enough money in ATM!");
         }
         Card card = cardRepository.findByAccountNumber(withdrawalRequest.getAccountNumber())
-                .orElseThrow(() -> new UserNotExistException("User not exists"));
+                .orElseThrow(() -> new CardNotExistException("Card not exists"));
         if (!card.getPin().equals(withdrawalRequest.getPin())) {
             throw new WrongPinException("Wrong PIN, try again!");
         }
@@ -55,9 +56,8 @@ public class ATMService {
         log.info("Cash on account before withdrawal {}", card.getBalance());
         double balanceAfterWithdrawal = card.calculateBalanceAfterWithdraw(amount);
         card.setBalance(balanceAfterWithdrawal);
-        cardRepository.save(card);
         log.info("Cash on account after withdrawal {}", card.getBalance());
-        WithdrawalResponse withdrawalResponse = atmData.convertMoneyIntoValues(amount, atmData.getMonies());
+        WithdrawalResponse withdrawalResponse = atmData.convertMoneyIntoValues(amount);
         withdrawalResponse.setBalance(balanceAfterWithdrawal);
         return withdrawalResponse;
     }
