@@ -4,14 +4,13 @@ import com.neueda.assignment.card.Card;
 import com.neueda.assignment.card.CardDTO;
 import com.neueda.assignment.card.CardMapper;
 import com.neueda.assignment.card.CardRepository;
+import com.neueda.assignment.exceptions.NotEnoughMoneyInATMException;
+import com.neueda.assignment.exceptions.NotEnoughMoneyOnAccountException;
 import com.neueda.assignment.exceptions.UserNotExistException;
 import com.neueda.assignment.exceptions.WrongAmountException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
 
-import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 @Slf4j
@@ -31,36 +30,47 @@ public class ATMService {
         return atmData.getCash();
     }
 
-    public double checkBalance(CardDTO cardDTO) throws UserNotExistException {
-        Optional<Card> card = cardRepository.readCardByAccountNumber(cardDTO.getAccountNumber());
-        if(card.isEmpty()){
+    public double checkBalance(CardDTO cardDTO) throws UserNotExistException, WrongPinException {
+        Optional<Card> card = cardRepository.findCardByAccountNumber(cardDTO.getAccountNumber());
+        if (card.isEmpty()) {
             throw new UserNotExistException("User not exists");
         }
-        log.info("Current balance is: ", card.get().getBalance());
+        if (!card.get().getPin().equals(cardDTO.getPin())) {
+            throw new WrongPinException("Wrong PIN, try again!");
+        }
+        log.info("Current balance is: {}", card.get().getBalance());
         return card.get().getBalance();
-        //        List<Card> cardList = cardRepository.findAll();
-//        Optional<CardDTO> first = cardList.stream()
-//                .map(cardMapper::mapToDTO)
-//                .filter(card -> Objects.equals(card.getAccountNumber(), cardDTO.getAccountNumber()))
-//                .findFirst();
-//        if (first.isEmpty()) {
-//            throw new UserNotExistException("User not exists!");
-//        }
-//        return first.get().getBalance();
     }
 
-    public double makeWithdrawal(WithdrawalRequest withdrawalRequest) throws WrongAmountException, UserNotExistException {
-        if (withdrawalRequest.getAmount() % 5 != 0) {
+    public double makeWithdrawal(WithdrawalRequest withdrawalRequest) throws WrongAmountException, UserNotExistException, NotEnoughMoneyInATMException, NotEnoughMoneyOnAccountException, WrongPinException {
+        double amount = withdrawalRequest.getAmount();
+        if (amount % 5 != 0) {
             log.error("Amount not devided by 5");
             throw new WrongAmountException("Incorrect amount!");
         }
-        Optional<Card> card = cardRepository.readCardByAccountNumber(withdrawalRequest.getAccountNumber());
-        if(card.isEmpty()){
+        if (amount > atmData.getCash()) {
+            log.error("Amount not devided by 5");
+            throw new NotEnoughMoneyInATMException("Incorrect amount!");
+        }
+        Optional<Card> card = cardRepository.findCardByAccountNumber(withdrawalRequest.getAccountNumber());
+        if (card.isEmpty()) {
             log.error("User not exists");
             throw new UserNotExistException("User not exists");
         }
-
-        return card.get().getBalance();
+        if (!card.get().getPin().equals(withdrawalRequest.getPin())) {
+            throw new WrongPinException("Wrong PIN, try again!");
+        }
+        double currentBalance = card.get().getBalance();
+        double overdraft = card.get().getOverdraft();
+        if (amount > currentBalance + overdraft) {
+            throw new NotEnoughMoneyOnAccountException("Not enough money on your account");
+        }
+        log.info("Cash on account before withdrawal {}", currentBalance);
+        atmData.setCash(atmData.getCash() - amount);
+        card.get().setBalance(currentBalance - amount);
+        cardRepository.save(card.get());
+        log.info("Cash on account after withdrawal {}", currentBalance);
+        return amount;
     }
 
 
