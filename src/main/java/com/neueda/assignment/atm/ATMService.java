@@ -25,10 +25,10 @@ public class ATMService {
         return atmData.sumCashInATM();
     }
 
-    public CheckBalanceResponse checkBalance(CardDTO cardDTO) throws UserNotExistException, WrongPinException {
-        Card card = cardRepository.findByAccountNumber(cardDTO.getAccountNumber())
+    public CheckBalanceResponse checkBalance(CheckBalanceRequest checkBalanceRequest) throws UserNotExistException, WrongPinException {
+        Card card = cardRepository.findByAccountNumber(checkBalanceRequest.getAccountNumber())
                 .orElseThrow(() -> new UserNotExistException("User not exists"));
-        if (!card.getPin().equals(cardDTO.getPin())) {
+        if (!card.getPin().equals(checkBalanceRequest.getPin())) {
             throw new WrongPinException("Wrong PIN, try again!");
         }
         log.info("Current balance is: {}", card.getBalance());

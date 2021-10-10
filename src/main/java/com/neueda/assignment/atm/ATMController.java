@@ -19,8 +19,8 @@ public class ATMController {
     }
 
     @PostMapping("/getBalance")
-    public CheckBalanceResponse checkBalance(@RequestBody CardDTO cardDTO) throws UserNotExistException, WrongPinException {
-        return atmService.checkBalance(cardDTO);
+    public CheckBalanceResponse checkBalance(@RequestBody CheckBalanceRequest checkBalanceRequest) throws UserNotExistException, WrongPinException {
+        return atmService.checkBalance(checkBalanceRequest);
     }
 
     @PostMapping("/makeWithdrawal")
