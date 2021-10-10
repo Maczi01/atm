@@ -1,8 +1,6 @@
 # ATM Backend
 
 
-https://img.shields.io/static/v1?label=<LABEL>&message=<MESSAGE>&color=<COLOR>
-
 Simple ATM machine in Java and SpringBoot and simple database H2 (in memory).
 
 ###Install
@@ -17,7 +15,6 @@ Simple ATM machine in Java and SpringBoot and simple database H2 (in memory).
 or try with Docker:
 
 docker-compose up -d
-
 
 App will be available on http://localhost:8080/
 
