@@ -7,7 +7,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class CardTest {
 
-    Card card;
+    private Card card;
 
     @Test
     @DisplayName("Calculate correct sume to withdraw - balance plus overdraft")
