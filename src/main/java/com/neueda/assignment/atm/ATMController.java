@@ -1,6 +1,7 @@
 package com.neueda.assignment.atm;
 
 import com.neueda.assignment.exceptions.*;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -18,14 +19,13 @@ public class ATMController {
     }
 
     @PostMapping("/getBalance")
-    public CheckBalanceResponse checkBalance(@RequestBody CheckBalanceRequest checkBalanceRequest) throws CardNotExistException, WrongPinException {
-        return atmService.checkBalance(checkBalanceRequest);
+    public ResponseEntity<CheckBalanceResponse> checkBalance(@RequestBody CheckBalanceRequest checkBalanceRequest) throws CardNotExistException, WrongPinException {
+        return ResponseEntity.ok(atmService.checkBalance(checkBalanceRequest));
     }
 
-//  TODO response
     @PostMapping("/makeWithdrawal")
-    public WithdrawalResponse makeWithdrawal(@RequestBody WithdrawalRequest withdrawalRequest) throws WrongAmountException, NotEnoughMoneyOnAccountException, NotEnoughMoneyInATMException, CardNotExistException, WrongPinException {
-        return atmService.makeWithdrawal(withdrawalRequest);
+    public ResponseEntity<WithdrawalResponse> makeWithdrawal(@RequestBody WithdrawalRequest withdrawalRequest) throws WrongAmountException, NotEnoughMoneyOnAccountException, NotEnoughMoneyInATMException, CardNotExistException, WrongPinException {
+        return ResponseEntity.ok(atmService.makeWithdrawal(withdrawalRequest));
     }
 
 }

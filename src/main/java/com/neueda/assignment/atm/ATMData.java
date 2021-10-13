@@ -54,9 +54,6 @@ public class ATMData {
             }
             moneyValue = moneyValue % collecttionOfNotes.get(i);
         }
-        for (Money money : list) {
-            System.out.println(money.getMoneyValues().getValue() + " " + money.getQuantity());
-        }
         valuesInATMlogger();
         withdrawResponse.setWithdrawal(list);
         return withdrawResponse;

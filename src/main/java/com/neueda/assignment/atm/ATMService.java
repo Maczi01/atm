@@ -67,8 +67,7 @@ public class ATMService {
         Money money2 = new Money(30, MoneyValue.TWENTY);
         Money money3 = new Money(30, MoneyValue.TEN);
         Money money4 = new Money(20, MoneyValue.FIVE);
-        Money[] moniesToATM = {money1, money2, money3, money4};
-        return moniesToATM;
+        return new Money[]{money1, money2, money3, money4};
     }
 
 }

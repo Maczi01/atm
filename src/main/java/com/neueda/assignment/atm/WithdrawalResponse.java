@@ -10,7 +10,10 @@ public class WithdrawalResponse {
     public WithdrawalResponse() {
     }
 
-
+    public WithdrawalResponse(double balance, List<Money> withdrawal) {
+        this.balance = balance;
+        this.withdrawal = withdrawal;
+    }
 
     public double getBalance() {
         return balance;

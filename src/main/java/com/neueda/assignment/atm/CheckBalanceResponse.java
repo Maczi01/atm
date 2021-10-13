@@ -5,9 +5,6 @@ public class CheckBalanceResponse {
     private double currentBalance;
     private double maximumAmountToWithdrawal;
 
-    public CheckBalanceResponse() {
-    }
-
     public CheckBalanceResponse(double currentBalance, double maximumAmountToWithdrawal) {
         this.currentBalance = currentBalance;
         this.maximumAmountToWithdrawal = maximumAmountToWithdrawal;
